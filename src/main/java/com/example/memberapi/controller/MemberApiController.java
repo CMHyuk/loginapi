@@ -2,6 +2,7 @@ package com.example.memberapi.controller;
 
 import com.example.memberapi.entity.Member;
 import com.example.memberapi.service.MemberService;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,10 @@ public class MemberApiController {
     private final MemberService memberService;
 
     @PostMapping("/api/member/add")
-    public CreateMemberResponse saveMember(@RequestBody Member member) {
+    public CreateMemberResponse saveMember(@RequestBody saveMemberRequest request) {
+        String loginId = request.loginId;
+        String password = request.password;
+        Member member = new Member(loginId, password);
         Member savedMember = memberService.join(member);
         return new CreateMemberResponse(savedMember.getLoginId(), savedMember.getPassword());
     }
@@ -49,6 +53,12 @@ public class MemberApiController {
     public void deleteMember(@PathVariable("id") Long id) {
         Member findMember = memberService.findById(id).get();
         memberService.delete(findMember);
+    }
+
+    @Data
+    static class saveMemberRequest {
+        private String loginId;
+        private String password;
     }
 
     @Data
