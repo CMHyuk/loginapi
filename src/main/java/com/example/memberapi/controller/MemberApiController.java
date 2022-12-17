@@ -1,9 +1,13 @@
 package com.example.memberapi.controller;
 
+import com.example.memberapi.dto.MemberDto;
 import com.example.memberapi.entity.Member;
+import com.example.memberapi.request.UpdateMemberRequest;
+import com.example.memberapi.request.saveMemberRequest;
+import com.example.memberapi.response.CreateMemberResponse;
+import com.example.memberapi.response.UpdateMemberResponse;
+import com.example.memberapi.result.Result;
 import com.example.memberapi.service.MemberService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -21,8 +25,8 @@ public class MemberApiController {
 
     @PostMapping("/api/member/add")
     public CreateMemberResponse saveMember(@RequestBody saveMemberRequest request) {
-        String loginId = request.loginId;
-        String password = request.password;
+        String loginId = request.getLoginId();
+        String password = request.getPassword();
         Member member = new Member(loginId, password);
         Member savedMember = memberService.join(member);
         return new CreateMemberResponse(savedMember.getLoginId(), savedMember.getPassword());
@@ -52,50 +56,5 @@ public class MemberApiController {
     public void deleteMember(@PathVariable("id") Long id) {
         Member findMember = memberService.findById(id).get();
         memberService.delete(findMember);
-    }
-
-    @Data
-    static class saveMemberRequest {
-        private String loginId;
-        private String password;
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class MemberDto {
-        private String loginId;
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class Result<T> {
-        private T data;
-    }
-
-    @Data
-    static class CreateMemberResponse {
-        private String loginId;
-        private String password;
-
-        public CreateMemberResponse(String loginId, String password) {
-            this.loginId = loginId;
-            this.password = password;
-        }
-    }
-
-    @Data
-    static class UpdateMemberResponse {
-        private String loginId;
-        private String password;
-
-        public UpdateMemberResponse(String loginId, String password) {
-            this.loginId = loginId;
-            this.password = password;
-        }
-    }
-
-    @Data
-    static class UpdateMemberRequest {
-        private String password;
     }
 }
