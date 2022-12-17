@@ -2,7 +2,6 @@ package com.example.memberapi.controller;
 
 import com.example.memberapi.entity.Member;
 import com.example.memberapi.service.MemberService;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +71,7 @@ public class MemberApiController {
     static class Result<T> {
         private T data;
     }
+
     @Data
     static class CreateMemberResponse {
         private String loginId;
