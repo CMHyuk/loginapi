@@ -3,10 +3,10 @@ package com.example.memberapi.controller;
 import com.example.memberapi.dto.MemberDto;
 import com.example.memberapi.entity.Member;
 import com.example.memberapi.request.UpdateMemberRequest;
-import com.example.memberapi.request.saveMemberRequest;
+import com.example.memberapi.request.SaveMemberRequest;
 import com.example.memberapi.response.CreateMemberResponse;
 import com.example.memberapi.response.UpdateMemberResponse;
-import com.example.memberapi.result.Result;
+import com.example.memberapi.response.FindMemberResponse;
 import com.example.memberapi.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,8 @@ public class MemberApiController {
     private final MemberService memberService;
 
     @PostMapping("/api/member/add")
-    public CreateMemberResponse saveMember(@RequestBody saveMemberRequest request) {
-        String loginId = request.getLoginId();
-        String password = request.getPassword();
-        Member member = new Member(loginId, password);
-        Member savedMember = memberService.join(member);
+    public CreateMemberResponse saveMember(@RequestBody SaveMemberRequest request) {
+        Member savedMember = memberService.join(request);
         return new CreateMemberResponse(savedMember.getLoginId(), savedMember.getPassword());
     }
 
@@ -43,13 +40,13 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/member/find")
-    public Result findMember() {
+    public FindMemberResponse findMember() {
         List<Member> findMembers = memberService.findAll();
         List<MemberDto> memberList = findMembers.stream()
                 .map(m -> new MemberDto(m.getLoginId()))
                 .collect(Collectors.toList());
 
-        return new Result(memberList);
+        return new FindMemberResponse(memberList);
     }
 
     @DeleteMapping("/api/member/delete/{id}")

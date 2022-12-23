@@ -1,6 +1,7 @@
 package com.example.memberapi.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,7 @@ public class Member {
 
     private String password;
 
+    @Builder
     public Member(String loginId, String password) {
         this.loginId = loginId;
         this.password = password;

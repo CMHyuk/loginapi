@@ -2,6 +2,7 @@ package com.example.memberapi.service;
 
 import com.example.memberapi.entity.Member;
 import com.example.memberapi.repository.MemberRepository;
+import com.example.memberapi.request.SaveMemberRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,12 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public Member join(Member member) {
+    public Member join(SaveMemberRequest saveMemberRequest) {
+        Member member = Member.builder()
+                .loginId(saveMemberRequest.getLoginId())
+                .password(saveMemberRequest.getPassword())
+                .build();
+
         validateDuplicateMember(member);
         return memberRepository.save(member);
     }
