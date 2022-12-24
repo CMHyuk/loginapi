@@ -1,10 +1,11 @@
 package com.example.memberapi.response;
 
-import lombok.Data;
+import com.example.memberapi.entity.Member;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
 @RequiredArgsConstructor
-public class FindMemberResponse<T> {
-    private final T data;
+public class FindMemberResponse {
+    private final Member member;
 }

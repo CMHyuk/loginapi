@@ -1,6 +1,9 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.entity.Member;
+import com.example.memberapi.exception.MemberDuplication;
+import com.example.memberapi.exception.MemberNotFound;
+import com.example.memberapi.exception.PasswordDuplication;
 import com.example.memberapi.repository.MemberRepository;
 import com.example.memberapi.request.SaveMemberRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,7 @@ public class MemberService {
                 .password(saveMemberRequest.getPassword())
                 .build();
 
-        validateDuplicateMember(member);
+        validateDuplicatedMember(member);
         return memberRepository.save(member);
     }
 
@@ -32,26 +35,37 @@ public class MemberService {
     }
 
     public Optional<Member> findById(Long id) {
-        return memberRepository.findById(id);
+        Member member = memberRepository.findById(id)
+                .orElseThrow(MemberNotFound::new);
+        return Optional.ofNullable(member);
     }
 
-    public void update(Long id, String password) {
-        Member member = memberRepository.findById(id).get();
+    public Member update(Long id, String password) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(MemberNotFound::new);
+
+        if (member.getPassword().equals(password)) {
+            throw new PasswordDuplication();
+        }
+
         member.setPassword(password);
+        return member;
     }
 
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
-    public void delete(Member member) {
+    public void delete(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(MemberNotFound::new);
         memberRepository.delete(member);
     }
 
-    private void validateDuplicateMember(Member member) {
+    private void validateDuplicatedMember(Member member) {
         Optional<Member> user = memberRepository.findUser(member.getLoginId());
         if (!user.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 아이디 입니다");
+            throw new MemberDuplication();
         }
     }
 }
