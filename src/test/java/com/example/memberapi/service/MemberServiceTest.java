@@ -45,7 +45,6 @@ class MemberServiceTest {
         Member joinMember = memberService.join(saveMemberRequest);
 
         //then
-        assertEquals(1L, joinMember.getId());
         assertEquals("아이디", joinMember.getLoginId());
         assertEquals("비밀번호", joinMember.getPassword());
     }

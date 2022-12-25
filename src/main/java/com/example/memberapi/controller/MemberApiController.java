@@ -38,13 +38,13 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/member/all")
-    public FindMembersResponse findMembers() {
+    public List findMembers() {
         List<Member> findMembers = memberService.findAll();
         List<MemberDto> memberList = findMembers.stream()
-                .map(m -> new MemberDto(m.getLoginId()))
+                .map(m -> new MemberDto(m.getLoginId(), m.getPassword()))
                 .collect(Collectors.toList());
 
-        return new FindMembersResponse(memberList);
+        return memberList;
     }
 
     @GetMapping("/api/member/{id}")

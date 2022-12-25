@@ -6,5 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class FindMembersResponse<T> {
+
     private final T data;
+
 }
