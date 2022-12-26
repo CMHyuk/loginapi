@@ -1,4 +1,4 @@
-package com.example.memberapi.entity;
+package com.example.memberapi.domain;
 
 import lombok.*;
 

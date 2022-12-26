@@ -1,11 +1,11 @@
 package com.example.memberapi.service;
 
-import com.example.memberapi.entity.Member;
+import com.example.memberapi.domain.Member;
 import com.example.memberapi.exception.MemberDuplication;
 import com.example.memberapi.exception.MemberNotFound;
 import com.example.memberapi.exception.PasswordDuplication;
 import com.example.memberapi.repository.MemberRepository;
-import com.example.memberapi.request.SaveMemberRequest;
+import com.example.memberapi.dto.request.SaveMemberRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,14 +1,14 @@
 package com.example.memberapi.controller;
 
 import com.example.memberapi.dto.MemberDto;
-import com.example.memberapi.entity.Member;
-import com.example.memberapi.request.UpdateMemberRequest;
-import com.example.memberapi.request.SaveMemberRequest;
-import com.example.memberapi.response.CreateMemberResponse;
-import com.example.memberapi.response.FindMemberResponse;
-import com.example.memberapi.response.UpdateMemberResponse;
-import com.example.memberapi.response.FindMembersResponse;
+import com.example.memberapi.domain.Member;
+import com.example.memberapi.dto.request.SaveMemberRequest;
+import com.example.memberapi.dto.request.UpdateMemberRequest;
+import com.example.memberapi.dto.response.CreateMemberResponse;
+import com.example.memberapi.dto.response.FindMemberResponse;
+import com.example.memberapi.dto.response.UpdateMemberResponse;
 import com.example.memberapi.service.MemberService;
+import com.example.memberapi.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class MemberApiController {
 
     private final MemberService memberService;
@@ -38,13 +38,11 @@ public class MemberApiController {
     }
 
     @GetMapping("/api/member/all")
-    public List findMembers() {
+    public List<MemberDto> findMembers() {
         List<Member> findMembers = memberService.findAll();
-        List<MemberDto> memberList = findMembers.stream()
+        return findMembers.stream()
                 .map(m -> new MemberDto(m.getLoginId(), m.getPassword()))
                 .collect(Collectors.toList());
-
-        return memberList;
     }
 
     @GetMapping("/api/member/{id}")
@@ -54,7 +52,9 @@ public class MemberApiController {
     }
 
     @DeleteMapping("/api/member/delete/{id}")
-    public void deleteMember(@PathVariable("id") Long id) {
-        memberService.delete(id);
+    public void deleteMember(@PathVariable("id") Long id, @Login Member loginMember) {
+        if (loginMember != null) {
+            memberService.delete(id);
+        }
     }
 }

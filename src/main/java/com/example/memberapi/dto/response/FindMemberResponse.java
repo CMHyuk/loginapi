@@ -1,6 +1,6 @@
-package com.example.memberapi.response;
+package com.example.memberapi.dto.response;
 
-import com.example.memberapi.entity.Member;
+import com.example.memberapi.domain.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

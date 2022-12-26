@@ -1,4 +1,4 @@
-package com.example.memberapi.response;
+package com.example.memberapi.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

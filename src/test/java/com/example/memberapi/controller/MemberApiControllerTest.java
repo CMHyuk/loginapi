@@ -1,20 +1,24 @@
 package com.example.memberapi.controller;
 
-import com.example.memberapi.entity.Member;
+import com.example.memberapi.domain.Member;
 import com.example.memberapi.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.example.memberapi.constant.SessionConst.LOGIN_MEMBER;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -36,9 +40,21 @@ class MemberApiControllerTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Mock
+    private MockHttpSession mockHttpSession;
+
     @BeforeEach
     void clean() {
         memberRepository.deleteAll();
+    }
+
+    @BeforeEach
+    void setUp() {
+        mockHttpSession = new MockHttpSession();
+    }
+    @AfterEach
+    void cleanSession() {
+        mockHttpSession.clearAttributes();
     }
 
     @Test
@@ -110,7 +126,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/delete/{id} 호출 시 회원 조회")
+    @DisplayName("/api/member/delete/{id} 호출 시 회원 삭제")
     void deleteMember() throws Exception {
         //given
         Member member = Member.builder()
@@ -118,20 +134,31 @@ class MemberApiControllerTest {
                 .password("비밀번호")
                 .build();
         memberRepository.save(member);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member);
 
         //expected
         mockMvc.perform(delete("/api/member/delete/{id}", member.getId())
-                        .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
-    @DisplayName("/api/member/delete/{id} 존재하지 않는 회원 호출")
+    @DisplayName("/api/member/delete/{id} 존재하지 않는 회원 삭제시 404오류")
     void deleteNonExistMember() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+        memberRepository.save(member);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member);
+
         //expected
-        mockMvc.perform(delete("/api/member/delete/{id}", 1L)
-                        .contentType(APPLICATION_JSON))
+        mockMvc.perform(delete("/api/member/delete/{id}", 100L)
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }

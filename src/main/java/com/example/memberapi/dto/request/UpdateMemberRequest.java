@@ -1,4 +1,4 @@
-package com.example.memberapi.request;
+package com.example.memberapi.dto.request;
 
 import lombok.Data;
 

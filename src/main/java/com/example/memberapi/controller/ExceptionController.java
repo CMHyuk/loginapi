@@ -1,7 +1,7 @@
 package com.example.memberapi.controller;
 
 import com.example.memberapi.exception.MemberException;
-import com.example.memberapi.response.ErrorResponse;
+import com.example.memberapi.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
