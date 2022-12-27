@@ -1,5 +1,6 @@
 package com.example.memberapi.web.interceptor;
 
+import com.example.memberapi.exception.AuthException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -20,7 +21,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         if(session == null || session.getAttribute(LOGIN_MEMBER) == null) {
             log.info("미인증 사용자 요청");
-            return false;
+            throw new AuthException();
         }
         return true;
     }

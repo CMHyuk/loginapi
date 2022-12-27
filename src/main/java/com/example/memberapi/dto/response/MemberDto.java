@@ -1,4 +1,4 @@
-package com.example.memberapi.dto;
+package com.example.memberapi.dto.response;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

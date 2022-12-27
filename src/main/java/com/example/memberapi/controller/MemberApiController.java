@@ -1,11 +1,11 @@
 package com.example.memberapi.controller;
 
-import com.example.memberapi.dto.MemberDto;
 import com.example.memberapi.domain.Member;
 import com.example.memberapi.dto.request.SaveMemberRequest;
 import com.example.memberapi.dto.request.UpdateMemberRequest;
 import com.example.memberapi.dto.response.CreateMemberResponse;
 import com.example.memberapi.dto.response.FindMemberResponse;
+import com.example.memberapi.dto.response.MemberDto;
 import com.example.memberapi.dto.response.UpdateMemberResponse;
 import com.example.memberapi.service.MemberService;
 import com.example.memberapi.web.argumentresolver.Login;

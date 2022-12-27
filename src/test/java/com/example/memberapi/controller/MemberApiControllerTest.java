@@ -52,6 +52,7 @@ class MemberApiControllerTest {
     void setUp() {
         mockHttpSession = new MockHttpSession();
     }
+
     @AfterEach
     void cleanSession() {
         mockHttpSession.clearAttributes();
@@ -126,6 +127,83 @@ class MemberApiControllerTest {
     }
 
     @Test
+    @DisplayName("/api/member/update/{id} 호출 시 회원 수정")
+    void updateMember() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+        memberRepository.save(member);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member);
+
+        Member updateMember = Member.builder()
+                .password("비밀번호변경")
+                .build();
+
+        String json = objectMapper.writeValueAsString(updateMember);
+
+        //expected
+        mockMvc.perform(patch("/api/member/update/{id}", member.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/api/member/update/{id} 미인증 401오류")
+    void createAuthErrorByUpdating() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+        memberRepository.save(member);
+
+        Member updateMember = Member.builder()
+                .password("비밀번호변경")
+                .build();
+
+        String json = objectMapper.writeValueAsString(updateMember);
+
+        //expected
+        mockMvc.perform(patch("/api/member/update/{id}", member.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/api/member/update/{id} 존재하지 않는 회원 수정")
+    void updateNonExistMember() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+        memberRepository.save(member);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member);
+
+        Member updateMember = Member.builder()
+                .password("비밀번호변경")
+                .build();
+
+        String json = objectMapper.writeValueAsString(updateMember);
+
+        //expected
+        mockMvc.perform(patch("/api/member/update/{id}", 100L)
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("/api/member/delete/{id} 호출 시 회원 삭제")
     void deleteMember() throws Exception {
         //given
@@ -160,6 +238,25 @@ class MemberApiControllerTest {
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/api/member/delete/{id} 미인증 401오류")
+    void createAuthErrorByDeleting() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+
+        //expected
+        mockMvc.perform(delete("/api/member/delete/{id}", member.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
