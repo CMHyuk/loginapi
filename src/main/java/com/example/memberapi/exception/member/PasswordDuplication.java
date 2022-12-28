@@ -1,6 +1,8 @@
-package com.example.memberapi.exception;
+package com.example.memberapi.exception.member;
 
-public class PasswordDuplication extends MemberException {
+import com.example.memberapi.exception.Exception;
+
+public class PasswordDuplication extends Exception {
 
     private static final String MESSAGE = "이전과 동일한 비밀번호입니다.";
 

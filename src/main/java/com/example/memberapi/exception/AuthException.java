@@ -1,6 +1,6 @@
 package com.example.memberapi.exception;
 
-public class AuthException extends MemberException {
+public class AuthException extends Exception {
 
     private static final String MESSAGE = "미인증 사용자 요청입니다.";
 

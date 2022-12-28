@@ -1,9 +1,9 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
-import com.example.memberapi.exception.MemberNotFound;
+import com.example.memberapi.exception.member.MemberNotFound;
 import com.example.memberapi.repository.MemberRepository;
-import com.example.memberapi.dto.request.SaveMemberRequest;
+import com.example.memberapi.dto.request.member.SaveMemberRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

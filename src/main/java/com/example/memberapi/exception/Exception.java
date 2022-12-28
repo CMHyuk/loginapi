@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public abstract class MemberException extends RuntimeException {
+public abstract class Exception extends RuntimeException {
 
     public final Map<String, String> validation = new HashMap<>();
 
-    public MemberException(String message) {
+    public Exception(String message) {
         super(message);
     }
 

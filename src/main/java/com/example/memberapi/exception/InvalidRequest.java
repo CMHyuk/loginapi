@@ -1,6 +1,6 @@
 package com.example.memberapi.exception;
 
-public class InvalidRequest extends MemberException {
+public class InvalidRequest extends Exception {
 
     private static final String MESSAGE = "잘못된 요청입니다.";
 

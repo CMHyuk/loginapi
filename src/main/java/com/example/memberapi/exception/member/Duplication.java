@@ -1,10 +1,12 @@
-package com.example.memberapi.exception;
+package com.example.memberapi.exception.member;
 
-public class MemberDuplication extends MemberException {
+import com.example.memberapi.exception.Exception;
+
+public class Duplication extends Exception {
 
     private static final String MESSAGE = "이미 존재하는 회원입니다.";
 
-    public MemberDuplication() {
+    public Duplication() {
         super(MESSAGE);
     }
 

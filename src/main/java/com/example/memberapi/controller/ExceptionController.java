@@ -1,6 +1,6 @@
 package com.example.memberapi.controller;
 
-import com.example.memberapi.exception.MemberException;
+import com.example.memberapi.exception.Exception;
 import com.example.memberapi.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,8 +33,8 @@ public class ExceptionController {
     }
 
     @ResponseBody
-    @ExceptionHandler(MemberException.class)
-    public ResponseEntity<ErrorResponse> memberException(MemberException e) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> memberException(Exception e) {
         int statusCode = e.getStatusCode();
 
         ErrorResponse body = ErrorResponse.builder()

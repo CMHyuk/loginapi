@@ -1,7 +1,7 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
-import com.example.memberapi.exception.MemberNotFound;
+import com.example.memberapi.exception.member.MemberNotFound;
 import com.example.memberapi.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

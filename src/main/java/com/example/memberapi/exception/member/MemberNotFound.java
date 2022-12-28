@@ -1,6 +1,8 @@
-package com.example.memberapi.exception;
+package com.example.memberapi.exception.member;
 
-public class MemberNotFound extends MemberException {
+import com.example.memberapi.exception.Exception;
+
+public class MemberNotFound extends Exception {
 
     private static final String MESSAGE = "존재하지 않는 회원입니다.";
 

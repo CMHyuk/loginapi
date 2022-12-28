@@ -1,8 +1,8 @@
 package com.example.memberapi.controller;
 
 import com.example.memberapi.domain.Member;
-import com.example.memberapi.dto.request.LoginRequest;
-import com.example.memberapi.dto.response.LoginResponse;
+import com.example.memberapi.dto.request.member.LoginRequest;
+import com.example.memberapi.dto.response.member.LoginResponse;
 import com.example.memberapi.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
