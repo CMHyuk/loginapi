@@ -1,8 +1,10 @@
 package com.example.memberapi.service;
 
+import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostEdit;
 import com.example.memberapi.dto.response.post.PostResponse;
+import com.example.memberapi.exception.InvalidRequest;
 import com.example.memberapi.exception.post.PostNotFound;
 import com.example.memberapi.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +33,11 @@ public class PostService {
                 .build();
     }
 
-    public Post edit(Long id, PostEdit postEdit) {
+    public Post edit(Long id, PostEdit postEdit, Member member) {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
+
+        isWriter(member, post);
 
         post.setTitle(postEdit.getTitle());
         post.setContent(postEdit.getContent());
@@ -41,10 +45,19 @@ public class PostService {
         return post;
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Member member) {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
-
+        isWriter(member, post);
         postRepository.delete(post);
+    }
+
+    private void isWriter(Member member, Post post) {
+        Long postMemberId = post.getMember().getId();
+        Long loginMemberId = member.getId();
+
+        if (!postMemberId.equals(loginMemberId)) {
+            throw new InvalidRequest();
+        }
     }
 }

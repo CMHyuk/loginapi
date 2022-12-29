@@ -1,19 +1,25 @@
 package com.example.memberapi.service;
 
+import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostEdit;
 import com.example.memberapi.dto.response.post.PostResponse;
+import com.example.memberapi.repository.MemberRepository;
 import com.example.memberapi.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class PostServiceTest {
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @Autowired
     PostRepository postRepository;
@@ -65,11 +71,18 @@ class PostServiceTest {
     @DisplayName("게시글 수정 테스트")
     void editTest() {
         //given
+        Member member = Member.builder()
+                .loginId("1")
+                .password("1")
+                .build();
+
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
+                .member(member)
                 .build();
 
+        memberRepository.save(member);
         Post savedPost = postService.save(post);
 
         PostEdit postEdit = PostEdit.builder()
@@ -78,7 +91,7 @@ class PostServiceTest {
                 .build();
 
         //when
-        Post editPost = postService.edit(savedPost.getId(), postEdit);
+        Post editPost = postService.edit(savedPost.getId(), postEdit, member);
 
         //then
         assertEquals("제목수정", editPost.getTitle());
@@ -87,16 +100,25 @@ class PostServiceTest {
 
     @Test
     @DisplayName("게시글 삭제 테스트")
+    @Transactional
     void deleteTest() {
         //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
+                .member(member)
                 .build();
         Post savedPost = postService.save(post);
 
         //when
-        postService.delete(savedPost.getId());
+        postService.delete(savedPost.getId(), member);
 
         //then
         assertEquals(0, postRepository.count());

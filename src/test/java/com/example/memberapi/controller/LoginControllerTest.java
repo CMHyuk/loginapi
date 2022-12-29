@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LoginApiControllerTest {
+class LoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +53,7 @@ class LoginApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/login 호출 시 존재하지 않는 회원 로그인")
+    @DisplayName("/login 호출 시 존재하지 않는 회원 로그인")
     void failLogin() throws Exception {
         //given
         Member member = Member.builder()
@@ -64,7 +64,7 @@ class LoginApiControllerTest {
         String json = objectMapper.writeValueAsString(member);
 
         //expected
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/login")
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNotFound())
@@ -72,7 +72,7 @@ class LoginApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/login 호출 시 존재하는 회원 로그인")
+    @DisplayName("/login 호출 시 존재하는 회원 로그인")
     void successLogin() throws Exception {
         //given
         Member member = Member.builder()
@@ -84,7 +84,7 @@ class LoginApiControllerTest {
         String json = objectMapper.writeValueAsString(member);
 
         //expected
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/login")
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))

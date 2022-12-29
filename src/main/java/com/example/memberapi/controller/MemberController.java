@@ -8,6 +8,7 @@ import com.example.memberapi.dto.response.member.FindMemberResponse;
 import com.example.memberapi.dto.response.member.MemberDto;
 import com.example.memberapi.dto.response.member.UpdateMemberResponse;
 import com.example.memberapi.service.MemberService;
+import com.example.memberapi.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,21 +20,22 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class MemberApiController {
+public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/api/member/add")
+    @PostMapping("/member/add")
     public CreateMemberResponse saveMember(@RequestBody SaveMemberRequest request) {
         Member savedMember = memberService.join(request);
         return new CreateMemberResponse(savedMember.getLoginId(), savedMember.getPassword());
     }
 
-    @PatchMapping("/api/member/update/{id}")
+    @PatchMapping("/member/update/{id}")
     public UpdateMemberResponse updateMember(@PathVariable("id") Long id,
                                              @RequestBody @Validated UpdateMemberRequest request,
-                                             HttpServletRequest httpServletRequest) {
-        Member findMember = memberService.update(id, request.getPassword());
+                                             HttpServletRequest httpServletRequest,
+                                             @Login Member member) {
+        Member findMember = memberService.update(id, request.getPassword(), member);
         HttpSession session = httpServletRequest.getSession(false);
         if (session != null) {
             session.invalidate();
@@ -41,7 +43,7 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getLoginId(), findMember.getPassword());
     }
 
-    @GetMapping("/api/member/all")
+    @GetMapping("/member/all")
     public List<MemberDto> findMembers() {
         List<Member> findMembers = memberService.findAll();
         return findMembers.stream()
@@ -49,14 +51,14 @@ public class MemberApiController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/api/member/{id}")
+    @GetMapping("/member/{id}")
     public FindMemberResponse findMember(@PathVariable("id") Long id) {
         Member findMember = memberService.findById(id).get();
         return new FindMemberResponse(findMember);
     }
 
-    @DeleteMapping("/api/member/delete/{id}")
-    public void deleteMember(@PathVariable("id") Long id) {
-        memberService.delete(id);
+    @DeleteMapping("/member/delete/{id}")
+    public void deleteMember(@PathVariable("id") Long id, @Login Member member) {
+        memberService.delete(id, member);
     }
 }

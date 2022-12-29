@@ -85,7 +85,7 @@ class MemberServiceTest {
         Member saveMember = memberRepository.save(member);
 
         //when
-        Member updateMember = memberService.update(saveMember.getId(), "새로운비밀번호");
+        Member updateMember = memberService.update(saveMember.getId(), "새로운비밀번호", member);
 
         //then
         assertEquals("새로운비밀번호", updateMember.getPassword());
@@ -103,7 +103,7 @@ class MemberServiceTest {
         Member saveMember = memberRepository.save(member);
 
         //when
-        memberService.delete(saveMember.getId());
+        memberService.delete(saveMember.getId(), member);
 
         //then
         assertEquals(0, memberRepository.count());
@@ -143,7 +143,7 @@ class MemberServiceTest {
 
         //expected
         assertThrows(PasswordDuplication.class, () -> {
-            memberService.update(saveMember.getId(), "비밀번호");
+            memberService.update(saveMember.getId(), "비밀번호", member);
         });
     }
 
@@ -155,7 +155,7 @@ class MemberServiceTest {
         });
 
         assertThrows(MemberNotFound.class, () -> {
-            memberService.update(1L, "새로운비밀번호");
+            memberService.update(1L, "새로운비밀번호", new Member("a", "a"));
         });
     }
 }

@@ -49,6 +49,7 @@ class PostControllerTest {
     @BeforeEach
     void clean() {
         postRepository.deleteAll();
+        memberRepository.deleteAll();
     }
 
     @BeforeEach
@@ -216,6 +217,56 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("/post/edit/{postId} 자신의 글이 아닌 다른 사람의 글 수정 시도시 오류")
+    void editOtherPostTest() throws Exception {
+        //given
+        Member member1 = Member.builder()
+                .loginId("1")
+                .password("1")
+                .build();
+
+        Member member2 = Member.builder()
+                .loginId("2")
+                .password("2")
+                .build();
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member1);
+
+        Post post1 = Post.builder()
+                .title("제목1")
+                .content("내용1")
+                .member(member1)
+                .build();
+
+        postService.save(post1);
+
+        Post post2 = Post.builder()
+                .title("제목2")
+                .content("내용2")
+                .member(member2)
+                .build();
+
+        postService.save(post2);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목수정")
+                .content("내용수정")
+                .build();
+
+        String json = objectMapper.writeValueAsString(postEdit);
+
+        //expected
+        mockMvc.perform(patch("/post/edit/{postId}", post2.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("/post/edit/{postId} 존재하지 않는 게시글 수정 시 오류")
     void editNonExistPostTest() throws Exception {
         //given
@@ -240,6 +291,115 @@ class PostControllerTest {
                         .session(mockHttpSession)
                         .content(json))
                 .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/post/delete/{postId} 호출 시 게시글 삭제")
+    void deletePostTest() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member);
+
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(member)
+                .build();
+
+        postService.save(post);
+
+        //expected
+        mockMvc.perform(delete("/post/delete/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/post/delete/{postId} 존재하지 않는 게시글 삭제 시 오류")
+    void deleteNonExistPostTest() throws Exception {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member);
+
+        //expected
+        mockMvc.perform(delete("/post/delete/{postId}", 100L)
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/post/delete/{postId} 세션 없으면 오류")
+    void deleteAuthErrorTest() throws Exception {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postService.save(post);
+
+        //expected
+        mockMvc.perform(delete("/post/delete/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/post/delete/{postId} 다른 사람의 게시글 삭제 시 오류")
+    void deleteOtherPostTest() throws Exception {
+        //given
+        Member member1 = Member.builder()
+                .loginId("1")
+                .password("1")
+                .build();
+
+        Member member2 = Member.builder()
+                .loginId("2")
+                .password("2")
+                .build();
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        mockHttpSession.setAttribute(LOGIN_MEMBER, member1);
+
+        Post post1 = Post.builder()
+                .title("제목1")
+                .content("내용1")
+                .member(member1)
+                .build();
+
+        postService.save(post1);
+
+        Post post2 = Post.builder()
+                .title("제목2")
+                .content("내용2")
+                .member(member2)
+                .build();
+
+        postService.save(post2);
+
+        //expected
+        mockMvc.perform(delete("/post/delete/{postId}", post2.getId(), member1)
+                        .contentType(APPLICATION_JSON)
+                        .session(mockHttpSession))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 }

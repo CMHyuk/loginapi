@@ -16,15 +16,15 @@ import static com.example.memberapi.constant.SessionConst.LOGIN_MEMBER;
 
 @RestController
 @RequiredArgsConstructor
-public class LoginApiController {
+public class LoginController {
 
     private final LoginService loginService;
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         Member loginMember = loginService.login(loginRequest.getLoginId(), loginRequest.getPassword());
 
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         session.setAttribute(LOGIN_MEMBER, loginMember);
 
         return new LoginResponse(loginMember.getLoginId(), loginRequest.getPassword());

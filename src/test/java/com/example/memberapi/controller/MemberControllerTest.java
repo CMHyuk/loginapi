@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MemberApiControllerTest {
+class MemberControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,8 +45,13 @@ class MemberApiControllerTest {
     private MockHttpSession mockHttpSession;
 
     @BeforeEach
-    void clean() {
+    void clearRepository() {
         memberRepository.deleteAll();
+    }
+
+    @AfterEach
+    void clearSession() {
+        mockHttpSession.clearAttributes();
     }
 
     @BeforeEach
@@ -53,13 +59,8 @@ class MemberApiControllerTest {
         mockHttpSession = new MockHttpSession();
     }
 
-    @AfterEach
-    void cleanSession() {
-        mockHttpSession.clearAttributes();
-    }
-
     @Test
-    @DisplayName("/api/member/add 호출 시 회원 저장")
+    @DisplayName("/member/add 호출 시 회원 저장")
     void save() throws Exception {
         //given
         Member member = Member.builder()
@@ -70,7 +71,7 @@ class MemberApiControllerTest {
         String json = objectMapper.writeValueAsString(member);
 
         //when
-        mockMvc.perform(post("/api/member/add")
+        mockMvc.perform(post("/member/add")
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -84,7 +85,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/{id} 호출 시 회원 조회")
+    @DisplayName("/member/{id} 호출 시 회원 조회")
     void find() throws Exception {
         //given
         Member member = Member.builder()
@@ -94,7 +95,7 @@ class MemberApiControllerTest {
         memberRepository.save(member);
 
         //expected
-        mockMvc.perform(get("/api/member/{id}", member.getId())
+        mockMvc.perform(get("/member/{id}", member.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.member.id").value(member.getId()))
@@ -104,7 +105,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/all 호출 시 회원 전체 조회")
+    @DisplayName("/member/all 호출 시 회원 전체 조회")
     void findMembers() throws Exception {
         //given
         List<Member> members = IntStream.range(0, 10)
@@ -117,7 +118,7 @@ class MemberApiControllerTest {
         memberRepository.saveAll(members);
 
         //expected
-        mockMvc.perform(get("/api/member/all")
+        mockMvc.perform(get("/member/all")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
@@ -127,7 +128,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/update/{id} 호출 시 회원 수정")
+    @DisplayName("/member/update/{id} 호출 시 회원 수정")
     void updateMember() throws Exception {
         //given
         Member member = Member.builder()
@@ -144,7 +145,7 @@ class MemberApiControllerTest {
         String json = objectMapper.writeValueAsString(updateMember);
 
         //expected
-        mockMvc.perform(patch("/api/member/update/{id}", member.getId())
+        mockMvc.perform(patch("/member/update/{id}", member.getId())
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))
@@ -153,7 +154,8 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/update/{id} 미인증 401오류")
+    @DisplayName("/member/update/{id} 미인증 401오류")
+    @Transactional
     void createAuthErrorByUpdating() throws Exception {
         //given
         Member member = Member.builder()
@@ -169,7 +171,7 @@ class MemberApiControllerTest {
         String json = objectMapper.writeValueAsString(updateMember);
 
         //expected
-        mockMvc.perform(patch("/api/member/update/{id}", member.getId())
+        mockMvc.perform(patch("/member/update/{id}", member.getId())
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))
@@ -178,7 +180,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/update/{id} 존재하지 않는 회원 수정")
+    @DisplayName("/member/update/{id} 존재하지 않는 회원 수정")
     void updateNonExistMember() throws Exception {
         //given
         Member member = Member.builder()
@@ -195,7 +197,7 @@ class MemberApiControllerTest {
         String json = objectMapper.writeValueAsString(updateMember);
 
         //expected
-        mockMvc.perform(patch("/api/member/update/{id}", 100L)
+        mockMvc.perform(patch("/member/update/{id}", 100L)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession)
                         .content(json))
@@ -204,7 +206,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/delete/{id} 호출 시 회원 삭제")
+    @DisplayName("/member/delete/{id} 호출 시 회원 삭제")
     void deleteMember() throws Exception {
         //given
         Member member = Member.builder()
@@ -215,7 +217,7 @@ class MemberApiControllerTest {
         mockHttpSession.setAttribute(LOGIN_MEMBER, member);
 
         //expected
-        mockMvc.perform(delete("/api/member/delete/{id}", member.getId())
+        mockMvc.perform(delete("/member/delete/{id}", member.getId(), member)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isOk())
@@ -223,7 +225,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/delete/{id} 존재하지 않는 회원 삭제시 404오류")
+    @DisplayName("/member/delete/{id} 존재하지 않는 회원 삭제시 404오류")
     void deleteNonExistMember() throws Exception {
         //given
         Member member = Member.builder()
@@ -234,7 +236,7 @@ class MemberApiControllerTest {
         mockHttpSession.setAttribute(LOGIN_MEMBER, member);
 
         //expected
-        mockMvc.perform(delete("/api/member/delete/{id}", 100L)
+        mockMvc.perform(delete("/member/delete/{id}", 100L, member)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isNotFound())
@@ -242,7 +244,8 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/delete/{id} 미인증 401오류")
+    @DisplayName("/member/delete/{id} 미인증 401오류")
+    @Transactional
     void createAuthErrorByDeleting() throws Exception {
         //given
         Member member = Member.builder()
@@ -253,7 +256,7 @@ class MemberApiControllerTest {
         memberRepository.save(member);
 
         //expected
-        mockMvc.perform(delete("/api/member/delete/{id}", member.getId())
+        mockMvc.perform(delete("/member/delete/{id}", member.getId(), member)
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isUnauthorized())
@@ -261,10 +264,10 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/{id} 존재하지 않는 회원 조회")
+    @DisplayName("/member/{id} 존재하지 않는 회원 조회")
     void findNonExistMember() throws Exception {
         //expected
-        mockMvc.perform(get("/api/member/{id}", 1L)
+        mockMvc.perform(get("/member/{id}", 1L)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());

@@ -1,6 +1,7 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
+import com.example.memberapi.exception.InvalidRequest;
 import com.example.memberapi.exception.member.Duplication;
 import com.example.memberapi.exception.member.MemberNotFound;
 import com.example.memberapi.exception.member.PasswordDuplication;
@@ -40,25 +41,37 @@ public class MemberService {
         return Optional.ofNullable(member);
     }
 
-    public Member update(Long id, String password) {
-        Member member = memberRepository.findById(id)
+    public Member update(Long id, String password, Member member) {
+        Member findMember = memberRepository.findById(id)
                 .orElseThrow(MemberNotFound::new);
 
-        if (member.getPassword().equals(password)) {
-            throw new PasswordDuplication();
-        }
+        validateSameMember(member, findMember);
+        validateDuplicatedPassword(password, member);
 
         member.setPassword(password);
         return member;
+    }
+
+    private void validateSameMember(Member member, Member findMember) {
+        if (findMember.getId() != member.getId()) {
+            throw new InvalidRequest();
+        }
+    }
+
+    private void validateDuplicatedPassword(String password, Member member) {
+        if (member.getPassword().equals(password)) {
+            throw new PasswordDuplication();
+        }
     }
 
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
-    public void delete(Long id) {
-        Member member = memberRepository.findById(id)
+    public void delete(Long id, Member member) {
+        Member findMember = memberRepository.findById(id)
                 .orElseThrow(MemberNotFound::new);
+        validateSameMember(member, findMember);
         memberRepository.delete(member);
     }
 

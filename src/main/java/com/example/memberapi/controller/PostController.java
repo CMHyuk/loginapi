@@ -34,8 +34,9 @@ public class PostController {
     }
 
     @PatchMapping("/post/edit/{postId}")
-    public PostResponse edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit) {
-        Post editPost = postService.edit(postId, postEdit);
+    public PostResponse edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit,
+                             @Login Member member) {
+        Post editPost = postService.edit(postId, postEdit, member);
         return PostResponse.builder()
                 .id(editPost.getId())
                 .title(editPost.getTitle())
@@ -44,7 +45,7 @@ public class PostController {
     }
 
     @DeleteMapping("/post/delete/{postId}")
-    public void delete(@PathVariable Long postId) {
-        postService.delete(postId);
+    public void delete(@PathVariable Long postId, @Login Member member) {
+        postService.delete(postId, member);
     }
 }
