@@ -17,7 +17,9 @@ public class Config implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
                 .addPathPatterns("/member/update/{id}", "/member/delete/{id}",
-                        "/post/write", "/post/edit/{postId}", "/post/delete/{postId}");
+                        "/post/write", "/post/edit/{postId}", "/post/delete/{postId}",
+                        "/post/{id}/comment", "post/{postId}/editComment/{commentId}",
+                        "post/{postId}/deleteComment/{commentId}");
     }
 
     @Override
