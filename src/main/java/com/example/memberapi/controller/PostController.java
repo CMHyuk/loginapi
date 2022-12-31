@@ -4,6 +4,7 @@ import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostCreate;
 import com.example.memberapi.dto.request.post.PostEdit;
+import com.example.memberapi.dto.response.post.PostDto;
 import com.example.memberapi.dto.response.post.PostResponse;
 import com.example.memberapi.service.PostService;
 import com.example.memberapi.web.argumentresolver.Login;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +29,14 @@ public class PostController {
                 .member(member)
                 .build();
         postService.save(post);
+    }
+
+    @GetMapping("/post")
+    public List<PostDto> getPosts() {
+        List<Post> posts = postService.getAll();
+        return posts.stream()
+                .map(p -> new PostDto(p.getTitle(), p.getContent()))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/post/{postId}")

@@ -12,6 +12,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import static com.example.memberapi.constant.SessionConst.*;
+
 @Slf4j
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -36,6 +38,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
             return null;
         }
 
-        return session.getAttribute(SessionConst.LOGIN_MEMBER);
+        return session.getAttribute(LOGIN_MEMBER);
     }
 }

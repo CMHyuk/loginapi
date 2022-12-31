@@ -1,10 +1,12 @@
 package com.example.memberapi.dto.request.member;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
+@Setter
 public class SaveMemberRequest {
 
     @NotBlank(message = "아이디를 입력하세요.")

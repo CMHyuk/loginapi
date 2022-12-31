@@ -32,7 +32,9 @@ public class MemberService {
     }
 
     public Optional<Member> findByLoginId(String loginId) {
-        return memberRepository.findByLoginId(loginId);
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFound::new);
+        return Optional.ofNullable(member);
     }
 
     public Optional<Member> findById(Long id) {

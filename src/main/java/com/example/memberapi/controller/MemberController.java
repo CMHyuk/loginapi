@@ -33,8 +33,7 @@ public class MemberController {
     @PatchMapping("/member/update/{id}")
     public UpdateMemberResponse updateMember(@PathVariable("id") Long id,
                                              @RequestBody @Validated UpdateMemberRequest request,
-                                             HttpServletRequest httpServletRequest,
-                                             @Login Member member) {
+                                             HttpServletRequest httpServletRequest, @Login Member member) {
         Member findMember = memberService.update(id, request.getPassword(), member);
         HttpSession session = httpServletRequest.getSession(false);
         if (session != null) {
