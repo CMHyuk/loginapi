@@ -32,6 +32,7 @@ public class PostService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .comments(post.getComments())
                 .build();
     }
 
@@ -39,7 +40,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Post edit(Long id, PostEdit postEdit, Member member) {
+    public PostResponse edit(Long id, PostEdit postEdit, Member member) {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
 
@@ -48,7 +49,12 @@ public class PostService {
         post.setTitle(postEdit.getTitle());
         post.setContent(postEdit.getContent());
 
-        return post;
+        return PostResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .comments(post.getComments())
+                .build();
     }
 
     public void delete(Long id, Member member) {

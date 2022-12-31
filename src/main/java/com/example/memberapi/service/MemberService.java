@@ -1,6 +1,7 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
+import com.example.memberapi.dto.response.member.MemberDto;
 import com.example.memberapi.exception.InvalidRequest;
 import com.example.memberapi.exception.member.Duplication;
 import com.example.memberapi.exception.member.MemberNotFound;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -66,8 +68,11 @@ public class MemberService {
         }
     }
 
-    public List<Member> findAll() {
-        return memberRepository.findAll();
+    public List<MemberDto> findAll() {
+        List<Member> findMembers = memberRepository.findAll();
+        return findMembers.stream()
+                .map(m -> new MemberDto(m.getLoginId(), m.getPassword()))
+                .collect(Collectors.toList());
     }
 
     public void delete(Long id, Member member) {

@@ -1,12 +1,11 @@
 package com.example.memberapi.dto.response.member;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
 @RequiredArgsConstructor
 public class MemberDto {
-
     private final String loginId;
     private final String password;
 }

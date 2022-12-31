@@ -1,14 +1,19 @@
 package com.example.memberapi.domain;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Setter
@@ -26,10 +31,13 @@ public class Post {
     @Lob
     private String content;
 
+    private LocalDate localDate = LocalDate.now();
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = ALL)
     private List<Comment> comments = new ArrayList<>();
 

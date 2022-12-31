@@ -47,12 +47,7 @@ public class PostController {
     @PatchMapping("/post/edit/{postId}")
     public PostResponse edit(@PathVariable Long postId, @RequestBody @Valid PostEdit postEdit,
                              @Login Member member) {
-        Post editPost = postService.edit(postId, postEdit, member);
-        return PostResponse.builder()
-                .id(editPost.getId())
-                .title(editPost.getTitle())
-                .content(editPost.getContent())
-                .build();
+        return postService.edit(postId, postEdit, member);
     }
 
     @DeleteMapping("/post/delete/{postId}")

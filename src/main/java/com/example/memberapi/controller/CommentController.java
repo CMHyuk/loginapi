@@ -10,6 +10,8 @@ import com.example.memberapi.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
@@ -18,13 +20,13 @@ public class CommentController {
 
     @PostMapping("/post/{postId}/comment")
     public SaveCommentResponse writeComment(@PathVariable Long postId, @Login Member member,
-                                            @RequestBody SaveCommentRequest request) {
+                                            @RequestBody @Valid SaveCommentRequest request) {
         return commentService.write(member.getLoginId(), postId, request);
     }
 
     @PatchMapping("/post/{postId}/editComment/{commentId}")
     public UpdateCommentResponse editComment(@PathVariable Long postId, @PathVariable Long commentId,
-                                             @Login Member member, @RequestBody UpdateCommentRequest request) {
+                                             @Login Member member, @RequestBody @Valid UpdateCommentRequest request) {
         return commentService.edit(member.getLoginId(), postId, commentId, request);
     }
 

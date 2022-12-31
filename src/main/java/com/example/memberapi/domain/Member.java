@@ -1,5 +1,6 @@
 package com.example.memberapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,9 +25,11 @@ public class Member {
 
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Post> posts = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Comment> comments = new ArrayList<>();
 

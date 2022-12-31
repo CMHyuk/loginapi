@@ -91,11 +91,11 @@ class PostServiceTest {
                 .build();
 
         //when
-        Post editPost = postService.edit(savedPost.getId(), postEdit, member);
+        PostResponse postResponse = postService.edit(savedPost.getId(), postEdit, member);
 
         //then
-        assertEquals("제목수정", editPost.getTitle());
-        assertEquals("내용수정", editPost.getContent());
+        assertEquals("제목수정", postResponse.getTitle());
+        assertEquals("내용수정", postResponse.getContent());
     }
 
     @Test

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,10 +43,7 @@ public class MemberController {
 
     @GetMapping("/member/all")
     public List<MemberDto> findMembers() {
-        List<Member> findMembers = memberService.findAll();
-        return findMembers.stream()
-                .map(m -> new MemberDto(m.getLoginId(), m.getPassword()))
-                .collect(Collectors.toList());
+        return memberService.findAll();
     }
 
     @GetMapping("/member/{id}")

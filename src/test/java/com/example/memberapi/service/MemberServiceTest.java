@@ -1,6 +1,7 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
+import com.example.memberapi.dto.response.member.MemberDto;
 import com.example.memberapi.exception.member.Duplication;
 import com.example.memberapi.exception.member.MemberNotFound;
 import com.example.memberapi.exception.member.PasswordDuplication;
@@ -63,7 +64,7 @@ class MemberServiceTest {
         memberRepository.saveAll(members);
 
         //when
-        List<Member> findMembers = memberService.findAll();
+        List<MemberDto> findMembers = memberService.findAll();
 
         //then
         assertEquals(2, findMembers.size());
