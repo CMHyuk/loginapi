@@ -17,11 +17,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static com.example.memberapi.constant.SessionConst.LOGIN_MEMBER;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -400,6 +403,38 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .session(mockHttpSession))
                 .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/post/search 검색 조회")
+    void searchPostTest() throws Exception {
+        //given
+        Post post1 = Post.builder()
+                .title("1")
+                .content("1")
+                .build();
+
+        Post post2 = Post.builder()
+                .title("111")
+                .content("111")
+                .build();
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+
+        MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
+        info.add("title", "1");
+
+        //expected
+        mockMvc.perform(get("/post/search")
+                        .contentType(APPLICATION_JSON)
+                        .params(info))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.posts[0].title").value("1"))
+                .andExpect(jsonPath("$.posts[1].title").value("111"))
+                .andExpect(jsonPath("$.posts[0].content").value("1"))
+                .andExpect(jsonPath("$.posts[1].content").value("111"))
                 .andDo(print());
     }
 }

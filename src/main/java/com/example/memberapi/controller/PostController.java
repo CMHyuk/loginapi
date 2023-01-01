@@ -6,6 +6,7 @@ import com.example.memberapi.dto.request.post.PostCreate;
 import com.example.memberapi.dto.request.post.PostEdit;
 import com.example.memberapi.dto.response.post.PostDto;
 import com.example.memberapi.dto.response.post.PostResponse;
+import com.example.memberapi.dto.response.post.PostSearchResponse;
 import com.example.memberapi.service.PostService;
 import com.example.memberapi.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,11 @@ public class PostController {
     @GetMapping("/post/{postId}")
     public PostResponse get(@PathVariable Long postId) {
         return postService.get(postId);
+    }
+
+    @GetMapping("/post/search")
+    public PostSearchResponse getPostSearch(@RequestParam String title) {
+        return postService.getPostSearch(title);
     }
 
     @PatchMapping("/post/edit/{postId}")

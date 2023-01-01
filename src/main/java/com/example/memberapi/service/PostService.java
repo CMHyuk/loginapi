@@ -3,7 +3,9 @@ package com.example.memberapi.service;
 import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostEdit;
+import com.example.memberapi.dto.response.member.MemberDto;
 import com.example.memberapi.dto.response.post.PostResponse;
+import com.example.memberapi.dto.response.post.PostSearchResponse;
 import com.example.memberapi.exception.InvalidRequest;
 import com.example.memberapi.exception.post.PostNotFound;
 import com.example.memberapi.repository.PostRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,6 +36,13 @@ public class PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .comments(post.getComments())
+                .build();
+    }
+
+    public PostSearchResponse getPostSearch(String title) {
+        List<Post> posts = postRepository.findByTitleContaining(title);
+        return PostSearchResponse.builder()
+                .posts(posts)
                 .build();
     }
 

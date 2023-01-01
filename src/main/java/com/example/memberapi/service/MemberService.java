@@ -2,6 +2,7 @@ package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
 import com.example.memberapi.dto.response.member.MemberDto;
+import com.example.memberapi.dto.response.member.UpdateMemberResponse;
 import com.example.memberapi.exception.InvalidRequest;
 import com.example.memberapi.exception.member.Duplication;
 import com.example.memberapi.exception.member.MemberNotFound;
@@ -45,7 +46,7 @@ public class MemberService {
         return Optional.ofNullable(member);
     }
 
-    public Member update(Long id, String password, Member member) {
+    public UpdateMemberResponse update(Long id, String password, Member member) {
         Member findMember = memberRepository.findById(id)
                 .orElseThrow(MemberNotFound::new);
 
@@ -53,7 +54,7 @@ public class MemberService {
         validateDuplicatedPassword(password, member);
 
         member.setPassword(password);
-        return member;
+        return new UpdateMemberResponse(member.getLoginId(), member.getPassword());
     }
 
     private void validateSameMember(Member member, Member findMember) {

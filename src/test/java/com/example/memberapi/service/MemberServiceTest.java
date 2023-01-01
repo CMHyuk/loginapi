@@ -2,6 +2,7 @@ package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
 import com.example.memberapi.dto.response.member.MemberDto;
+import com.example.memberapi.dto.response.member.UpdateMemberResponse;
 import com.example.memberapi.exception.member.Duplication;
 import com.example.memberapi.exception.member.MemberNotFound;
 import com.example.memberapi.exception.member.PasswordDuplication;
@@ -86,10 +87,10 @@ class MemberServiceTest {
         Member saveMember = memberRepository.save(member);
 
         //when
-        Member updateMember = memberService.update(saveMember.getId(), "새로운비밀번호", member);
+        UpdateMemberResponse memberResponse = memberService.update(saveMember.getId(), "새로운비밀번호", member);
 
         //then
-        assertEquals("새로운비밀번호", updateMember.getPassword());
+        assertEquals("새로운비밀번호", memberResponse.getPassword());
     }
 
     @Test

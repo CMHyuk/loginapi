@@ -25,11 +25,9 @@ public class Member {
 
     private String password;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Post> posts = new ArrayList<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Comment> comments = new ArrayList<>();
 

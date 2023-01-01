@@ -37,7 +37,6 @@ public class Post {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = ALL)
     private List<Comment> comments = new ArrayList<>();
 

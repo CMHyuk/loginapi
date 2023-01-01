@@ -4,6 +4,7 @@ import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostEdit;
 import com.example.memberapi.dto.response.post.PostResponse;
+import com.example.memberapi.dto.response.post.PostSearchResponse;
 import com.example.memberapi.repository.MemberRepository;
 import com.example.memberapi.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -83,6 +86,7 @@ class PostServiceTest {
                 .build();
 
         memberRepository.save(member);
+
         Post savedPost = postService.save(post);
 
         PostEdit postEdit = PostEdit.builder()
@@ -122,5 +126,37 @@ class PostServiceTest {
 
         //then
         assertEquals(0, postRepository.count());
+    }
+
+    @Test
+    @DisplayName("게시글 검색 테스트")
+    void searchTest() {
+        //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+
+        Post post1 = Post.builder()
+                .title("1")
+                .content("1")
+                .member(member)
+                .build();
+
+        Post post2 = Post.builder()
+                .title("111")
+                .content("111")
+                .member(member)
+                .build();
+        postRepository.save(post1);
+        postRepository.save(post2);
+
+        //when
+        PostSearchResponse postSearch = postService.getPostSearch("1");
+
+        //then
+        assertEquals(2, postSearch.getPosts().size());
     }
 }
