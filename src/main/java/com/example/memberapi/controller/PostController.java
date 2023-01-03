@@ -4,7 +4,7 @@ import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostCreate;
 import com.example.memberapi.dto.request.post.PostEdit;
-import com.example.memberapi.dto.response.post.PostDto;
+import com.example.memberapi.dto.request.post.PostSearch;
 import com.example.memberapi.dto.response.post.PostResponse;
 import com.example.memberapi.dto.response.post.PostSearchResponse;
 import com.example.memberapi.service.PostService;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,11 +32,8 @@ public class PostController {
     }
 
     @GetMapping("/post")
-    public List<PostDto> getPosts() {
-        List<Post> posts = postService.getAll();
-        return posts.stream()
-                .map(p -> new PostDto(p.getTitle(), p.getContent()))
-                .collect(Collectors.toList());
+    public List<PostSearchResponse> getPosts(@ModelAttribute PostSearch postSearch) {
+        return postService.getAll(postSearch);
     }
 
     @GetMapping("/post/{postId}")
@@ -46,8 +42,8 @@ public class PostController {
     }
 
     @GetMapping("/post/search")
-    public PostSearchResponse getPostSearch(@RequestParam String title) {
-        return postService.getPostSearch(title);
+    public List<PostSearchResponse> getPostSearch(@RequestParam String title) {
+        return postService.findBySearch(title);
     }
 
     @PatchMapping("/post/edit/{postId}")

@@ -1,14 +1,16 @@
 package com.example.memberapi.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.*;
-import static lombok.AccessLevel.*;
+import static javax.persistence.CascadeType.ALL;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Setter

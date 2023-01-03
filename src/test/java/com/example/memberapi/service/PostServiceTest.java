@@ -154,9 +154,11 @@ class PostServiceTest {
         postRepository.save(post2);
 
         //when
-        PostSearchResponse postSearch = postService.getPostSearch("1");
+        List<PostSearchResponse> posts = postService.findBySearch("1");
 
         //then
-        assertEquals(2, postSearch.getPosts().size());
+        assertEquals(2, posts.size());
+        assertEquals("1", posts.get(0).getTitle());
+        assertEquals("아이디", posts.get(0).getLoginId());
     }
 }

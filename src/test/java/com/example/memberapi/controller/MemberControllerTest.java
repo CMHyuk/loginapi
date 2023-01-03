@@ -98,9 +98,9 @@ class MemberControllerTest {
         mockMvc.perform(get("/member/{id}", member.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.member.id").value(member.getId()))
-                .andExpect(jsonPath("$.member.loginId").value("아이디"))
-                .andExpect(jsonPath("$.member.password").value("비밀번호"))
+                .andExpect(jsonPath("$.id").value(member.getId()))
+                .andExpect(jsonPath("$.loginId").value("아이디"))
+                .andExpect(jsonPath("$.password").value("비밀번호"))
                 .andDo(print());
     }
 

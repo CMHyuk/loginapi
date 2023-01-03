@@ -4,16 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class PostSearchResponse {
-
+public class PostSearchDto {
     private final Long postId;
     private final String title;
-    private final String loginId;
 
     @Builder
-    public PostSearchResponse(Long postId, String title, String loginId) {
+    public PostSearchDto(Long postId, String title) {
         this.postId = postId;
         this.title = title;
-        this.loginId = loginId;
     }
 }

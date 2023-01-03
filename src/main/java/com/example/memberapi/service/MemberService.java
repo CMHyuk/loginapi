@@ -1,6 +1,7 @@
 package com.example.memberapi.service;
 
 import com.example.memberapi.domain.Member;
+import com.example.memberapi.dto.response.member.FindMemberResponse;
 import com.example.memberapi.dto.response.member.MemberDto;
 import com.example.memberapi.dto.response.member.UpdateMemberResponse;
 import com.example.memberapi.exception.InvalidRequest;
@@ -40,10 +41,15 @@ public class MemberService {
         return Optional.ofNullable(member);
     }
 
-    public Optional<Member> findById(Long id) {
+    public FindMemberResponse findById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(MemberNotFound::new);
-        return Optional.ofNullable(member);
+
+        return FindMemberResponse.builder()
+                .id(member.getId())
+                .loginId(member.getLoginId())
+                .password(member.getPassword())
+                .build();
     }
 
     public UpdateMemberResponse update(Long id, String password, Member member) {
@@ -52,9 +58,12 @@ public class MemberService {
 
         validateSameMember(member, findMember);
         validateDuplicatedPassword(password, member);
+        findMember.setPassword(password);
 
-        member.setPassword(password);
-        return new UpdateMemberResponse(member.getLoginId(), member.getPassword());
+        return UpdateMemberResponse.builder()
+                .loginId(findMember.getLoginId())
+                .password(findMember.getPassword())
+                .build();
     }
 
     private void validateSameMember(Member member, Member findMember) {

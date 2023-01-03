@@ -3,7 +3,8 @@ package com.example.memberapi.service;
 import com.example.memberapi.domain.Member;
 import com.example.memberapi.domain.Post;
 import com.example.memberapi.dto.request.post.PostEdit;
-import com.example.memberapi.dto.response.member.MemberDto;
+import com.example.memberapi.dto.request.post.PostSearch;
+import com.example.memberapi.dto.response.comment.CommentDto;
 import com.example.memberapi.dto.response.post.PostResponse;
 import com.example.memberapi.dto.response.post.PostSearchResponse;
 import com.example.memberapi.exception.InvalidRequest;
@@ -35,19 +36,23 @@ public class PostService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .comments(post.getComments())
+                .comments(post.getComments().stream()
+                        .map(c -> new CommentDto(c.getComment()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 
-    public PostSearchResponse getPostSearch(String title) {
+    public List<PostSearchResponse> findBySearch(String title) {
         List<Post> posts = postRepository.findByTitleContaining(title);
-        return PostSearchResponse.builder()
-                .posts(posts)
-                .build();
+        return posts.stream()
+                .map(p -> new PostSearchResponse(p.getId(), p.getTitle(), p.getMember().getLoginId()))
+                .collect(Collectors.toList());
     }
 
-    public List<Post> getAll() {
-        return postRepository.findAll();
+    public List<PostSearchResponse> getAll(PostSearch postSearch) {
+        return postRepository.getList(postSearch).stream()
+                .map(p -> new PostSearchResponse(p.getId(), p.getTitle(), p.getMember().getLoginId()))
+                .collect(Collectors.toList());
     }
 
     public PostResponse edit(Long id, PostEdit postEdit, Member member) {
@@ -63,7 +68,9 @@ public class PostService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .comments(post.getComments())
+                .comments(post.getComments().stream()
+                        .map(c -> new CommentDto(c.getComment()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

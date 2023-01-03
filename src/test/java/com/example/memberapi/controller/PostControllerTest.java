@@ -20,9 +20,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static com.example.memberapi.constant.SessionConst.LOGIN_MEMBER;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -410,14 +416,23 @@ class PostControllerTest {
     @DisplayName("/post/search 검색 조회")
     void searchPostTest() throws Exception {
         //given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+
         Post post1 = Post.builder()
                 .title("1")
                 .content("1")
+                .member(member)
                 .build();
 
         Post post2 = Post.builder()
                 .title("111")
                 .content("111")
+                .member(member)
                 .build();
 
         postRepository.save(post1);
@@ -431,10 +446,41 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .params(info))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.posts[0].title").value("1"))
-                .andExpect(jsonPath("$.posts[1].title").value("111"))
-                .andExpect(jsonPath("$.posts[0].content").value("1"))
-                .andExpect(jsonPath("$.posts[1].content").value("111"))
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$[0].title").value("1"))
+                .andExpect(jsonPath("$[0].loginId").value("아이디"))
+                .andExpect(jsonPath("$[1].title").value("111"))
+                .andExpect(jsonPath("$[1].loginId").value("아이디"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/post 페이징 테스트")
+    void pagingTest() throws Exception {
+        // given
+        Member member = Member.builder()
+                .loginId("아이디")
+                .password("비밀번호")
+                .build();
+
+        memberRepository.save(member);
+
+        List<Post> requestPosts = IntStream.range(0, 20)
+                .mapToObj(i -> Post.builder()
+                        .title("foo" + i)
+                        .content("bar" + i)
+                        .member(member)
+                        .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(requestPosts);
+
+        // expected
+        mockMvc.perform(get("/post?page=0&size=10")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].title").value("foo19"))
                 .andDo(print());
     }
 }
