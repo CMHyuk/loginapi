@@ -39,6 +39,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = ALL)
+    private List<Reply> replies = new ArrayList<>();
+
     @Builder
     public Post(String title, String content, Member member) {
         this.title = title;

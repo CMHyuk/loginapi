@@ -7,10 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -18,14 +14,14 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class Comment {
+public class Reply {
 
     @Id
     @GeneratedValue
-    @Column(name = "COMMENT_ID")
+    @Column(name = "REPLY_ID")
     private Long id;
 
-    private String comment;
+    private String replyComment;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
@@ -35,13 +31,15 @@ public class Comment {
     @JoinColumn(name = "POST_ID")
     private Post post;
 
-    @OneToMany(mappedBy = "comment", cascade = ALL)
-    private List<Reply> replies = new ArrayList<>();
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "COMMENT_ID")
+    private Comment comment;
 
     @Builder
-    public Comment(String comment, Member member, Post post) {
-        this.comment = comment;
+    public Reply(String replyComment, Member member, Post post, Comment comment) {
+        this.replyComment = replyComment;
         this.member = member;
         this.post = post;
+        this.comment = comment;
     }
 }
